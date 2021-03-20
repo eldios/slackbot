@@ -30,6 +30,8 @@ import (
 
 // Start will run the main code for the Slack->PD Bot
 func Start(config *config) error {
+	fmt.Printf("Connecting to Slack...\n")
+
 	bot := slacker.NewClient(config.slack.token)
 	// defining which function handles the bot Init phase
 	bot.Init(
@@ -46,7 +48,7 @@ func Start(config *config) error {
 	// function tied to sentences sent to the Bot and starting with "open emergency" followed by some text
 	emergencyCmdDefinition := &slacker.CommandDefinition{
 		Description: "Open an EMERGENCY incident to Customer Support",
-		Handler: func(request slacker.Request, response slacker.ResponseWriter) {
+		Handler: func(_ slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
 			if err := Emergency(request, response, config); err != nil {
 				Err(err.Error())
 				return
@@ -57,7 +59,7 @@ func Start(config *config) error {
 
 	// when no other "Command" matches and text is sent to the Bot, this function will be run instead
 	bot.DefaultCommand(
-		func(request slacker.Request, response slacker.ResponseWriter) {
+		func(_ slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
 			if err := Default(request, response, config); err != nil {
 				Err(err.Error())
 				return
@@ -73,7 +75,7 @@ func Start(config *config) error {
 	// set the "help" message handling function
 	helpCmdDefinition := &slacker.CommandDefinition{
 		Description: "Help function",
-		Handler: func(request slacker.Request, response slacker.ResponseWriter) {
+		Handler: func(_ slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
 			help(response, config)
 		},
 	}
@@ -126,24 +128,20 @@ func Emergency(request slacker.Request, response slacker.ResponseWriter, config 
 	fmt.Printf("Opening incident on schedule \"%s\"/%s\n", schedule.Name,
 		config.pagerDuty.schedule)
 
-	newIncident := pagerduty.CreateIncidentOptions{
+	createIncidentOpts := pagerduty.CreateIncidentOptions{
 		Type: "incident",
 		Title: fmt.Sprintf("Incident opened by %s, via Slack/@%s",
 			config.customerName, config.slack.botUsername),
 	}
 
-	newIncident.Body = pagerduty.APIDetails{
+	createIncidentOpts.Body = &pagerduty.APIDetails{
 		Type:    "incident_body",
 		Details: request.Param("msg"),
 	}
 
-	newIncident.Service = pagerduty.APIReference{
+	createIncidentOpts.Service = &pagerduty.APIReference{
 		Type: "service_reference",
 		ID:   config.pagerDuty.service,
-	}
-
-	createIncidentOpts := pagerduty.CreateIncident{
-		Incident: newIncident,
 	}
 
 	incident, err := client.CreateIncident(config.pagerDuty.fromEmail, &createIncidentOpts)
