@@ -9,9 +9,6 @@ RUN set -x && \
 COPY  . /go/src/github.com/eldios/slackbot
 WORKDIR /go/src/github.com/eldios/slackbot
 
-RUN set -x && \
-    dep ensure -v
-
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o slackbot .
 
 # RUNTIME
