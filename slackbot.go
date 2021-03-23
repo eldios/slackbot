@@ -19,6 +19,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -43,7 +44,9 @@ func Start(config *config) error {
 		})
 
 	// error raised by the Bot will be handled by this function
-	bot.Err(Err)
+	bot.Err(func(err string) {
+		fmt.Printf("%s\n", err)
+	})
 
 	// function tied to sentences sent to the Bot and starting with "open emergency" followed by some text
 	emergencyCmdDefinition := &slacker.CommandDefinition{
@@ -69,7 +72,9 @@ func Start(config *config) error {
 	// function run for all events received by the bot (including time ticks)
 	bot.DefaultEvent(
 		func(event interface{}) {
-			//log.Println(event)
+			if config.debug {
+				log.Println(event)
+			}
 		})
 
 	// set the "help" message handling function

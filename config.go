@@ -19,6 +19,7 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"strings"
 
 	"github.com/gravitational/trace"
 )
@@ -26,6 +27,7 @@ import (
 // config is the configuration structure used everywhere in the code to pass settings and configuration
 type config struct {
 	customerName string
+	debug        bool
 	directory    map[string]interface{}
 	slack        slackConfig
 	pagerDuty    pagerDutyConfig
@@ -43,6 +45,8 @@ const (
 
 	botUsername = "SLACK_BOT_USERNAME"
 
+	debugOptName = "SLACK_BOT_DEBUG"
+
 	link = "PAGERDUTY_LINK"
 
 	aPIKey = "PAGERDUTY_API_KEY"
@@ -57,6 +61,12 @@ const (
 // FromEnv gathers configuration from the Environment variables and merge them into the Config structure
 func (c *config) FromEnv() error {
 	c.customerName = getVarFromEnv(customerName)
+
+	c.debug = false
+	debugOpt := getVarFromEnv(debugOptName)
+	if (strings.EqualFold(debugOpt, "true") || debugOpt == "1") {
+		c.debug = true
+	}
 
 	JSONDirectory := getVarFromEnv(jSONDirectory)
 	err := json.Unmarshal([]byte(JSONDirectory), &c.directory)
