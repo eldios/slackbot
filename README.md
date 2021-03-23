@@ -20,14 +20,15 @@ In order to do so a few basic requirements need to be setup and configured via e
 |---------------|-------------|---------|
 | CUSTOMER_NAME | Arbitrary name used in messages and needed to identify the customer requesting support | "Awesome Customer Brand" |
 | SLACK_PAGERDUTY_DIRECTORY | String that specifies a Directory of email addresses (used in PagerDuty) and their corresponding Slack user (via their Slack username) in a JSON format | { "oncalluser1@example.email" : "slack_username1", "oncalluser2@example.email" : "slack_username2" } |
-| SLACK_TOKEN | Token provided by Slack when creating a new Bot app. | 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef |
+| SLACK_TOKEN | Slack Legacy App Token provided when creating the Bot app | xoxb-11111111111-2222222222222-333333333333333333333333 |
 | SLACK_BOT_USERNAME | Slack username assigned to the bot, mostly used in the `help` message output | "customersupportbot" |
+| SLACK_BOT_DEBUG | Enable Debug messages from the bot | true |
 | PAGERDUTY_LINK | Base PagerDuty link used to hook up to the API | "https://mycompany.pagerduty.com" |
 | PAGERDUTY_API_KEY | PagerDuty API Key provided when creating a new API Token | 0123456789abcdef0123456789abcdef |
 | PAGERDUTY_FROM_EMAIL | Email Address used as the "From:" in Incidents creation on PagerDuty API requests | "customersupport@example.email" |
-| PAGERDUTY_SERVICE_API_KEY | TODO | 0123456789abcdef0123456789abcdef |
-| PAGERDUTY_SUPPORT_SCHEDULE | ID associated with the PagerDuty Schedule used to provide oncall support the specified customer | P000001 |
-| PAGERDUTY_SUPPORT_SERVICE | TODO | P000001 |
+| PAGERDUTY_SERVICE_API_KEY | API Key used to access PagerDuty schedule | 0123456789abcdef0123456789abcdef |
+| PAGERDUTY_SUPPORT_SCHEDULE | ID for the chosen PagerDuty Schedule | P000001 |
+| PAGERDUTY_SUPPORT_SERVICE | ID for the chosen PagerDuty Service | P000001 |
 
 ## Running slackbot Locally
 
