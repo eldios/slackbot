@@ -17,7 +17,9 @@ limitations under the License.
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -46,52 +48,52 @@ func Start(config *config) error {
 		fmt.Printf("%s\n", err)
 	})
 
-			// function tied to sentences sent to the Bot and starting with "open emergency" followed by some text
-			emergencyCmdDefinition := &slacker.CommandDefinition{
-				Description: "Open an EMERGENCY incident to Customer Support",
-				Handler: func(_ slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
-					if err := Emergency(request, response, config); err != nil {
-						Err(err.Error())
-						return
-					}
-				},
+	// function tied to sentences sent to the Bot and starting with "open emergency" followed by some text
+	emergencyCmdDefinition := &slacker.CommandDefinition{
+		Description: "Open an EMERGENCY incident to Customer Support",
+		Handler: func(_ slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
+			if err := Emergency(request, response, config); err != nil {
+				Err(err.Error())
+				return
 			}
-			bot.Command("open emergency <msg>", emergencyCmdDefinition)
+		},
+	}
+	bot.Command("open emergency <msg>", emergencyCmdDefinition)
 
-			// when no other "Command" matches and text is sent to the Bot, this function will be run instead
-			bot.DefaultCommand(
-				func(_ slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
-					if err := Default(request, response, config); err != nil {
-						Err(err.Error())
-						return
-					}
-				})
-
-			// function run for all events received by the bot (including time ticks)
-			bot.DefaultEvent(
-				func(event interface{}) {
-					if c.debug {
-						log.Println(event)
-					}
-				})
-
-			// set the "help" message handling function
-			helpCmdDefinition := &slacker.CommandDefinition{
-				Description: "Help function",
-				Handler: func(_ slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
-					help(response, config)
-				},
+	// when no other "Command" matches and text is sent to the Bot, this function will be run instead
+	bot.DefaultCommand(
+		func(_ slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
+			if err := Default(request, response, config); err != nil {
+				Err(err.Error())
+				return
 			}
-			bot.Help(helpCmdDefinition)
+		})
 
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
+	// function run for all events received by the bot (including time ticks)
+	bot.DefaultEvent(
+		func(event interface{}) {
+			if config.debug {
+				log.Println(event)
+			}
+		})
 
-		err := bot.Listen(ctx)
-		if err != nil {
-			Err(err.Error())
-			return trace.Wrap(err)
-		}
+	// set the "help" message handling function
+	helpCmdDefinition := &slacker.CommandDefinition{
+		Description: "Help function",
+		Handler: func(_ slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
+			help(response, config)
+		},
+	}
+	bot.Help(helpCmdDefinition)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	err := bot.Listen(ctx)
+	if err != nil {
+		Err(err.Error())
+		return trace.Wrap(err)
+	}
 
 	return nil
 }
