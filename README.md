@@ -5,6 +5,13 @@
 `slackbot` is an automated Bot for Slack that connects to PagerDuty to provide 
 some basic self-service and oncall Support features to Customers.
 
+## Pre-Req
+
+In order for the bot to work, you'll have to create and install a custom Slack app.
+Unfortunately atm there's a withstanding issues with RTM perms thus a v1 token needs to be created instead.
+
+Please create a "legacy token" [here](https://api.slack.com/apps?new_classic_app=1) and add a "Legacy Bot user" afterward.
+
 ## Settings
 
 In order to do so a few basic requirements need to be setup and configured via environment variables:
