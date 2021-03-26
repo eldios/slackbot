@@ -20,7 +20,7 @@ In order to do so a few basic requirements need to be setup and configured via e
 |---------------|-------------|---------|
 | CUSTOMER_NAME | Arbitrary name used in messages and needed to identify the customer requesting support | "Awesome Customer Brand" |
 | SLACK_PAGERDUTY_DIRECTORY | String that specifies a Directory of email addresses (used in PagerDuty) and their corresponding Slack user (via their Slack username) in a JSON format | { "oncalluser1@example.email" : "slack_username1", "oncalluser2@example.email" : "slack_username2" } |
-| SLACK_TOKEN | Slack Legacy App Token provided when creating the Bot app | xoxb-11111111111-2222222222222-333333333333333333333333 |
+| SLACK_TOKEN | Slack Legacy App Token. This is taken from "https://api.slack.com/apps -> Your App -> Features -> "OAuth & Permissions" | xoxb-11111111111-2222222222222-333333333333333333333333 |
 | SLACK_BOT_USERNAME | Slack username assigned to the bot, mostly used in the `help` message output | "customersupportbot" |
 | SLACK_BOT_DEBUG | Enable Debug messages from the bot | true |
 | PAGERDUTY_LINK | Base PagerDuty link used to hook up to the API | "https://mycompany.pagerduty.com" |
